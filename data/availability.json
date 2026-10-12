@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-10-12T05:39:28.801Z",
+  "updatedAt": "2026-10-12T05:42:08.645Z",
   "venues": [
     {
       "id": "pickleball-one-ginza",
       "name": "ピックルボールワン銀座新橋",
       "area": "新橋",
       "ok": false,
-      "error": "RESERVA 403 2026-10-12",
+      "error": "RESERVA 403 (ページ表示の段階)",
       "slots": []
     }
   ]
