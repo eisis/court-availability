@@ -1,0 +1,13 @@
+{
+  "updatedAt": "2026-10-12T05:26:28.303Z",
+  "venues": [
+    {
+      "id": "kpi-park",
+      "name": "KPI PARK",
+      "area": "横浜",
+      "ok": false,
+      "error": "LaBOLA 429 https://yoyaku.labola.jp/r/shop/3302/calendar_week/2026/10/12/?tab_name=%E3%83%94%E3%83%83%E3%82%AF%E3%83%AB%E3%83%9C%E3%83%BC%E3%83%AB%E3%82%B3%E3%83%BC%E3%83%88",
+      "slots": []
+    }
+  ]
+}
