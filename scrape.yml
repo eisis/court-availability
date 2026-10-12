@@ -1,0 +1,33 @@
+name: Scrape court availability
+
+on:
+  schedule:
+    - cron: '*/30 * * * *' # 30分ごと（GitHub側の混雑で数分遅れることがあります）
+  workflow_dispatch: {} # 手動実行ボタン
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scrape
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run scrape
+      - name: Commit if changed
+        run: |
+          git config user.name "availability-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/availability.json
+          git diff --cached --quiet || (git commit -m "update availability" && git push)

@@ -1,0 +1,20 @@
+{
+  "name": "court-availability",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/labola.test.js",
+    "scrape": "node scrape.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.2.0"
+  },
+  "type": "module"
+}
