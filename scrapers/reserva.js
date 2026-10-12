@@ -35,6 +35,12 @@ export function parseDay(html, date) {
  */
 export async function fetchReserva({ shop, menuIds, days = 14, delayMs = 2000 }) {
   const all = [];
+  const UA = 'tokyo-pickleball-guide availability bot (+https://tokyo-pickleball-guide.vercel.app/)';
+  const pageUrl = `${BASE}/${shop}/availability`;
+  // 通常の訪問と同じく、まずページを開いてCookieを受け取ってからフォームを送る
+  const first = await fetch(pageUrl, { headers: { 'User-Agent': UA } });
+  if (!first.ok) throw new Error(`RESERVA ${first.status} (ページ表示の段階)`);
+  const cookie = first.headers.getSetCookie().map((c) => c.split(';')[0]).join('; ');
   const today = new Date(Date.now() + 9 * 3600 * 1000); // JST基準
   for (let i = 0; i < days; i++) {
     const d = new Date(today);
@@ -46,15 +52,21 @@ export async function fetchReserva({ shop, menuIds, days = 14, delayMs = 2000 })
       bus_front_availability_time_to: '23',
     });
     menuIds.forEach((id) => body.append('menu_search[]', id));
-    const res = await fetch(`${BASE}/${shop}/availability`, {
+    const res = await fetch(pageUrl, {
       method: 'POST',
       body,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'tokyo-pickleball-guide availability bot (+https://tokyo-pickleball-guide.vercel.app/)',
+        'User-Agent': UA,
+        Referer: pageUrl,
+        Cookie: cookie,
       },
     });
-    if (!res.ok) throw new Error(`RESERVA ${res.status} ${ymd}`);
+    if (!res.ok) {
+      const text = await res.text();
+      const blocked = /cloudflare|cf-ray|Attention Required|Just a moment/i.test(text) ? '（Cloudflareによるブロック）' : '';
+      throw new Error(`RESERVA ${res.status} ${ymd} ${blocked}`);
+    }
     const slots = parseDay(await res.text(), ymd).map((s) => ({ ...s, bookingUrl: `${BASE}/${shop}` }));
     all.push(...slots);
     if (i < days - 1) await new Promise((r) => setTimeout(r, delayMs)); // 相手サーバーに配慮
