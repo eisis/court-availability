@@ -2,21 +2,30 @@
 // 新しい予約システムに対応したら sources に1行足すだけで増やせる構成
 import { writeFile, mkdir } from 'node:fs/promises';
 import { fetchLabola, splitTo30min } from './scrapers/labola.js';
+import { fetchReserva } from './scrapers/reserva.js';
 
 const sources = [
   {
-    id: 'kpi-park',
-    name: 'KPI PARK',
-    area: '横浜',
+    id: 'pickleball-one-ginza',
+    name: 'ピックルボールワン銀座新橋',
+    area: '新橋',
     fetch: () =>
-      fetchLabola({
-        shopId: 3302,
-        tabName: 'ピックルボールコート',
-        weeks: 2,
-        excludeCourts: ['レンタル'], // 「パドル＋ボールレンタル」はコートではないので除外
+      fetchReserva({
+        shop: 'pboneginza',
+        menuIds: ['110499', '110500'], // レンタルコート（ONE / FUN）。体験会・レッスンは除外
+        days: 14,
       }),
   },
-  // TODO: Pacific PICKLE CLUB（resv.jp）、ピックルボールワン（RESERVA）、SEIBU（TableCheck）、東京タワー
+  // KPI PARK（LaBOLA）はクラウドからのアクセスが429で拒否されるため停止中。
+  // 運営者の許可が取れたら、下のコメントを外して再開する。
+  // {
+  //   id: 'kpi-park',
+  //   name: 'KPI PARK',
+  //   area: '横浜',
+  //   fetch: () =>
+  //     fetchLabola({ shopId: 3302, tabName: 'ピックルボールコート', weeks: 2, excludeCourts: ['レンタル'] }),
+  // },
+  // TODO: Pacific PICKLE CLUB（resv.jp）、SEIBU（TableCheck）、東京タワー
 ];
 
 const result = { updatedAt: new Date().toISOString(), venues: [] };
